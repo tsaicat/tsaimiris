@@ -1,0 +1,55 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-family: var(--font-body);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(139,111,71,0.15);
+}
+
+.icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.label {
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+/* Layer color variants */
+.top {
+  background: linear-gradient(135deg, #FFF8EC, #FFF0D8);
+  border-color: #EDD9B8;
+  color: #5A3E24;
+}
+
+.middle {
+  background: linear-gradient(135deg, #F8F0FF, #F2E8FF);
+  border-color: #DDD0F0;
+  color: #4A3060;
+}
+
+.base {
+  background: linear-gradient(135deg, #F5EDE0, #EDE0CC);
+  border-color: #D9C9B0;
+  color: #4A3520;
+}
+
+/* Default (no layer) */
+.chip:not(.top):not(.middle):not(.base) {
+  background: var(--ivory-dark);
+  border-color: var(--card-border);
+  color: var(--text-secondary);
+}

@@ -1,0 +1,67 @@
+.pyramid {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-soft);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--walnut);
+  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+}
+
+.layer {
+  padding: 12px 0;
+}
+
+.layerHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.layerIcon {
+  font-size: 10px;
+  color: var(--amber);
+  opacity: 0.7;
+}
+
+.layerName {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--amber-dark);
+}
+
+.layerSub {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-left: auto;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--champagne), transparent);
+  margin: 4px 0;
+}

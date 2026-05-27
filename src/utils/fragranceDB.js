@@ -1,55 +1,51 @@
 /**
  * Fragrance database loader.
- *
- * The database JSON files live inside src/data/fragrance so Vite includes them
- * in the built app instead of relying on public file paths.
- *
- * Index format: [[name, brand, dataIndex], ...]
- * Data format:  [[name, brand, top[], mid[], base[], url, rating, year, gender], ...]
  */
+
+import fragranceIndex from '../data/fragrance/fragrance_index.json'
+
+import fragranceData0 from '../data/fragrance/fragrance_data_0.json'
+import fragranceData1 from '../data/fragrance/fragrance_data_1.json'
+import fragranceData2 from '../data/fragrance/fragrance_data_2.json'
+import fragranceData3 from '../data/fragrance/fragrance_data_3.json'
+import fragranceData4 from '../data/fragrance/fragrance_data_4.json'
+import fragranceData5 from '../data/fragrance/fragrance_data_5.json'
+import fragranceData6 from '../data/fragrance/fragrance_data_6.json'
+import fragranceData7 from '../data/fragrance/fragrance_data_7.json'
+import fragranceData8 from '../data/fragrance/fragrance_data_8.json'
+import fragranceData9 from '../data/fragrance/fragrance_data_9.json'
+import fragranceData10 from '../data/fragrance/fragrance_data_10.json'
+import fragranceData11 from '../data/fragrance/fragrance_data_11.json'
+import fragranceData12 from '../data/fragrance/fragrance_data_12.json'
+import fragranceData13 from '../data/fragrance/fragrance_data_13.json'
 
 const CHUNK_SIZE = 5000
 
-let indexData = null
-let indexPromise = null
-const chunkCache = {}
+let indexData = fragranceIndex
 
-const fragranceJsonModules = import.meta.glob('../data/fragrance/*.json')
-
-async function loadJson(relativePath) {
-  const loader = fragranceJsonModules[relativePath]
-
-  if (!loader) {
-    throw new Error(`Fragrance database file not found: ${relativePath}`)
-  }
-
-  const module = await loader()
-  return module.default
+const chunkCache = {
+  0: fragranceData0,
+  1: fragranceData1,
+  2: fragranceData2,
+  3: fragranceData3,
+  4: fragranceData4,
+  5: fragranceData5,
+  6: fragranceData6,
+  7: fragranceData7,
+  8: fragranceData8,
+  9: fragranceData9,
+  10: fragranceData10,
+  11: fragranceData11,
+  12: fragranceData12,
+  13: fragranceData13,
 }
 
 export async function loadIndex() {
-  if (indexData) return indexData
-  if (indexPromise) return indexPromise
-
-  indexPromise = loadJson('../data/fragrance/fragrance_index.json')
-    .then(data => {
-      indexData = data
-      return data
-    })
-    .catch(error => {
-      indexPromise = null
-      throw error
-    })
-
-  return indexPromise
+  return indexData
 }
 
 async function loadChunk(chunkIndex) {
-  if (chunkCache[chunkIndex]) return chunkCache[chunkIndex]
-
-  const data = await loadJson(`../data/fragrance/fragrance_data_${chunkIndex}.json`)
-  chunkCache[chunkIndex] = data
-  return data
+  return chunkCache[chunkIndex] || []
 }
 
 export function searchIndex(query, limit = 12) {

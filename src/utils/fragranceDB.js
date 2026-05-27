@@ -1,52 +1,73 @@
 /**
  * Fragrance database loader.
- * Index (~3.2 MB) loads on first search.
- * Data is split into 14 chunks of ~1.2 MB each -- only the relevant chunk loads per lookup.
+ *
+ * The database JSON files live inside src/data/fragrance so Vite includes them
+ * in the built app instead of relying on public file paths.
  *
  * Index format: [[name, brand, dataIndex], ...]
  * Data format:  [[name, brand, top[], mid[], base[], url, rating, year, gender], ...]
  */
 
 const CHUNK_SIZE = 5000
-const TOTAL_CHUNKS = 14
 
 let indexData = null
-let indexLoading = false
 let indexPromise = null
 const chunkCache = {}
+
+const fragranceJsonModules = import.meta.glob('../data/fragrance/*.json')
+
+async function loadJson(relativePath) {
+  const loader = fragranceJsonModules[relativePath]
+
+  if (!loader) {
+    throw new Error(`Fragrance database file not found: ${relativePath}`)
+  }
+
+  const module = await loader()
+  return module.default
+}
 
 export async function loadIndex() {
   if (indexData) return indexData
   if (indexPromise) return indexPromise
-  indexLoading = true
-  indexPromise = fetch(`${import.meta.env.BASE_URL}fragrance_index.json`)
-    .then(r => { if (!r.ok) throw new Error('Index load failed'); return r.json() })
-    .then(data => { indexData = data; indexLoading = false; return data })
-    .catch(err => { indexLoading = false; indexPromise = null; throw err })
+
+  indexPromise = loadJson('../data/fragrance/fragrance_index.json')
+    .then(data => {
+      indexData = data
+      return data
+    })
+    .catch(error => {
+      indexPromise = null
+      throw error
+    })
+
   return indexPromise
 }
 
 async function loadChunk(chunkIndex) {
   if (chunkCache[chunkIndex]) return chunkCache[chunkIndex]
-  const res = await fetch(`${import.meta.env.BASE_URL}fragrance_data_${chunkIndex}.json`)
-  if (!res.ok) throw new Error(`Chunk ${chunkIndex} load failed`)
-  const data = await res.json()
+
+  const data = await loadJson(`../data/fragrance/fragrance_data_${chunkIndex}.json`)
   chunkCache[chunkIndex] = data
   return data
 }
 
 export function searchIndex(query, limit = 12) {
   if (!indexData || !query.trim()) return []
+
   const q = query.toLowerCase().trim()
   const results = []
+
   for (const entry of indexData) {
     const name = entry[0].toLowerCase()
     const brand = entry[1].toLowerCase()
+
     if (name.includes(q) || brand.includes(q)) {
       results.push({ name: entry[0], brand: entry[1], idx: entry[2] })
       if (results.length >= limit) break
     }
   }
+
   return results
 }
 
@@ -55,7 +76,9 @@ export async function getFragranceByIndex(idx) {
   const localIndex = idx % CHUNK_SIZE
   const chunk = await loadChunk(chunkIndex)
   const row = chunk[localIndex]
+
   if (!row) return null
+
   return {
     name: row[0],
     brand: row[1],

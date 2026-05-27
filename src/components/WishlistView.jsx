@@ -3,7 +3,7 @@ import FragranceCard from './FragranceCard'
 import SearchSortControls from './SearchSortControls'
 import styles from './WishlistView.module.css'
 
-export default function WishlistView({ fragrances, selected, onSelect, onAdd }) {
+export default function WishlistView({ fragrances, selected, onSelect, onAdd, collectionName = 'Collection' }) {
   const [search, setSearch] = useState('')
   const [sortBy, setSortBy] = useState('name')
   const [filterNote, setFilterNote] = useState('')
@@ -38,7 +38,7 @@ export default function WishlistView({ fragrances, selected, onSelect, onAdd }) 
     <div className={styles.view}>
       <div className={styles.header}>
         <div className={styles.titleRow}>
-          <h2 className={styles.title}>Wishlist</h2>
+          <h2 className={styles.title}>{collectionName} Wishlist</h2>
           <span className={styles.count}>{fragrances.filter(f=>f.status==='wishlist').length} fragrances</span>
         </div>
         <button className={styles.addBtn} onClick={onAdd}>
